@@ -8,6 +8,7 @@ import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.io.Serial;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -46,8 +47,16 @@ public final class LambdaFilter extends JFrame {
         LINESCOUNT("Lines count", elem -> String.valueOf(Math.toIntExact(elem.lines().count()))),
         WORDSORT("Word sorting", 
         elem -> Arrays.stream(elem.split("\\s"))
-                        .sorted(String.CASE_INSENSITIVE_ORDER)
-                        .collect(Collectors.joining("\r\n"))),
+                    .sorted(String.CASE_INSENSITIVE_ORDER)
+                    .collect(Collectors.joining("\r\n"))),
+        WORDCOUNT("Word counting", 
+        elem -> Arrays.stream(elem.split("\\s+"))
+                    .filter(word -> !word.isEmpty())
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                    .entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey(String.CASE_INSENSITIVE_ORDER))
+                    .map(entry -> entry.getKey() + "->" + entry.getValue())
+                    .collect(Collectors.joining("\r\n"))),
         TOLOWERCASE("To lowercase", String::toLowerCase);
 
         private final String commandName;
