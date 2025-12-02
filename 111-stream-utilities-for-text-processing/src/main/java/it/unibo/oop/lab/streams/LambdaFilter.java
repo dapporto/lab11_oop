@@ -7,8 +7,10 @@ import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.io.Serial;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -38,10 +40,15 @@ public final class LambdaFilter extends JFrame {
     private static final long serialVersionUID = 1760990730218643730L;
 
     private enum Command {
-        /**
-         * Commands.
-         */
-        IDENTITY("No modifications", Function.identity());
+
+        IDENTITY("No modifications", Function.identity()),
+        CHARCOUNT("Character count", elem -> String.valueOf(elem.length())),
+        LINESCOUNT("Lines count", elem -> String.valueOf(Math.toIntExact(elem.lines().count()))),
+        WORDSORT("Word sorting", 
+        elem -> Arrays.stream(elem.split("\\s"))
+                        .sorted(String.CASE_INSENSITIVE_ORDER)
+                        .collect(Collectors.joining("\r\n"))),
+        TOLOWERCASE("To lowercase", String::toLowerCase);
 
         private final String commandName;
         private final Function<String, String> fun;
